@@ -1,0 +1,23 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# 数据文件夹
+data/
+
+# Bot Service State Files
+bot_service/services/kol_monitor/*.json
+
+# Secrets
+.env
+
+# Logs & Outputs
+*.log
+*.txt

@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "Context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {}
+    },
+    "Context7-BinanceFutures": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "X-Context7-Library-Ids": "/binance/binance-spot-api-docs,/binance/binance-connector-python"
+      }
+    },
+    "Context7-OKXV5": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "X-Context7-Library-Ids": "/websites/okx-docs-v5-en,/okxapi/python-okx"
+      }
+    },
+    "Context7-CCXT": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "X-Context7-Library-Ids": "/ccxt/ccxt"
+      }
+    },
+    "Context7-CryptoMarketData": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "X-Context7-Library-Ids": "/websites/coingecko,/websites/tardis_dev"
+      }
+    },
+    "Context7-CryptoNews": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "X-Context7-Library-Ids": "/websites/cryptonews-api,/websites/developers_coindesk"
+      }
+    }
+  }
+}
+
