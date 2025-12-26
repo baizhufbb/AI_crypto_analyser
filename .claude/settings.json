@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python $CLAUDE_PROJECT_DIR/.claude/hooks/check_constraints.py"
+            "command": "python .claude/hooks/check_constraints.py"
           }
         ]
       }
