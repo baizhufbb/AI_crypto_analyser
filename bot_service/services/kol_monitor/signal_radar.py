@@ -1,18 +1,19 @@
 import os
 import requests
 from bot_service.services.kol_monitor.base import BaseRadar
+from bot_service.config import Config
 
 
 class SignalRadar(BaseRadar):
     """KOL消息监控"""
-    
+
     def __init__(self, dingtalk_client):
-        super().__init__('signal_monitor_state.json', dingtalk_client)
-        self.api_url = os.getenv("KOL_API_URL")
-    
+        super().__init__('signal_monitor_state.json', dingtalk_client, "[KOL消息]")
+        self.api_url = Config.KOL_API_URL
+
     def get_initial_state(self):
         return {'last_id': 0}
-    
+
     def get_api_url(self):
         return self.api_url
     
@@ -31,12 +32,12 @@ class SignalRadar(BaseRadar):
                 if isinstance(data, list):
                     return data
                     
-                print(f"⚠️ API 返回结构未知: {data.keys() if isinstance(data, dict) else type(data)}")
+                print(f"{self.log_prefix} ⚠️ API 返回结构未知: {data.keys() if isinstance(data, dict) else type(data)}")
                 return []
-                
-            print(f"❌ API 请求失败: {response.status_code}")
+
+            print(f"{self.log_prefix} ❌ API 请求失败: {response.status_code}")
         except Exception as e:
-            print(f"❌ 获取消息异常: {e}")
+            print(f"{self.log_prefix} ❌ 获取消息异常: {e}")
         return []
     
     def format_message(self, item):
@@ -99,21 +100,21 @@ class SignalRadar(BaseRadar):
     def process_new_items(self, state):
         """处理新消息"""
         last_id = state.get('last_id', 0)
-        print(f"💓 正在检查更新... (上次 ID: {last_id})")
-        
+        print(f"{self.log_prefix} 💓 正在检查更新... (上次 ID: {last_id})")
+
         messages = self.fetch_data()
-        
+
         # 按 ID 排序 (旧 -> 新)
         messages.sort(key=lambda x: x.get('id', 0))
-        
+
         new_last_id = last_id
         has_new = False
-        
+
         for item in messages:
             msg_id = item.get('id')
             if msg_id > last_id:
                 content = self.format_message(item)
-                print(f"🔔 发现新消息 ID: {msg_id}")
+                print(f"{self.log_prefix} 🔔 发现新消息 ID: {msg_id}")
                 
                 # 优先使用昵称，无昵称时使用用户名
                 author_nickname = item.get('author_nickname', '')

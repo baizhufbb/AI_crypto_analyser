@@ -2,18 +2,19 @@ import os
 import requests
 from datetime import datetime
 from bot_service.services.kol_monitor.base import BaseRadar
+from bot_service.config import Config
 
 
 class TraderRadar(BaseRadar):
     """交易员信号监控"""
-    
+
     def __init__(self, dingtalk_client):
-        super().__init__('trader_monitor_state.json', dingtalk_client)
-        self.api_url = os.getenv("TRADER_API_URL")
-    
+        super().__init__('trader_monitor_state.json', dingtalk_client, "[交易员信号]")
+        self.api_url = Config.TRADER_API_URL
+
     def get_initial_state(self):
         return {'last_timestamps': {}}
-    
+
     def get_api_url(self):
         return self.api_url
     
@@ -33,11 +34,11 @@ class TraderRadar(BaseRadar):
                 # API 返回结构: {"code": 0, "data": [...], ...}
                 if isinstance(data, dict) and 'data' in data:
                     return data['data']
-                print(f"⚠️ API 返回结构未知: {data.keys() if isinstance(data, dict) else type(data)}")
+                print(f"{self.log_prefix} ⚠️ API 返回结构未知: {data.keys() if isinstance(data, dict) else type(data)}")
                 return []
-            print(f"❌ API 请求失败: {response.status_code}")
+            print(f"{self.log_prefix} ❌ API 请求失败: {response.status_code}")
         except Exception as e:
-            print(f"❌ 获取交易员数据异常: {e}")
+            print(f"{self.log_prefix} ❌ 获取交易员数据异常: {e}")
         return []
     
     def format_signal(self, trader, signal):
@@ -115,12 +116,12 @@ class TraderRadar(BaseRadar):
     def process_new_items(self, state):
         """处理新信号"""
         last_timestamps = state.get('last_timestamps', {})
-        print(f"💓 正在检查更新... (已跟踪 {len(last_timestamps)} 个交易员)")
-        
+        print(f"{self.log_prefix} 💓 正在检查更新... (已跟踪 {len(last_timestamps)} 个交易员)")
+
         traders = self.fetch_data()
-        
+
         if not traders:
-            print("⚠️ 未获取到交易员数据")
+            print(f"{self.log_prefix} ⚠️ 未获取到交易员数据")
             return False, state
         
         has_new = False
@@ -152,8 +153,8 @@ class TraderRadar(BaseRadar):
                     signal_type = signal.get('signalType', '')
                     symbol = signal.get('symbol', '')
                     title = f"【{trader_name}】{signal_type} {symbol}"
-                    
-                    print(f"🔔 发现新信号: {trader_name} - {signal_type} {symbol}")
+
+                    print(f"{self.log_prefix} 🔔 发现新信号: {trader_name} - {signal_type} {symbol}")
                     self.dingtalk.send(content, title=title)
                     has_new = True
                 

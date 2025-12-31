@@ -27,10 +27,15 @@ class Config:
         if uid.strip().isdigit()
     ]
     
-    # KOL 监控配置
-    DINGTALK_WEBHOOK: str = os.getenv("DINGTALK_WEBHOOK", "")
-    DINGTALK_SECRET: str = os.getenv("DINGTALK_SECRET", "")
+    # 钉钉配置
+    DINGTALK_KOL_WEBHOOK: str = os.getenv("DINGTALK_KOL_WEBHOOK", "")
+    DINGTALK_KOL_SECRET: str = os.getenv("DINGTALK_KOL_SECRET", "")
+    DINGTALK_TRADER_WEBHOOK: str = os.getenv("DINGTALK_TRADER_WEBHOOK", "")
+    DINGTALK_TRADER_SECRET: str = os.getenv("DINGTALK_TRADER_SECRET", "")
+
+    # API 配置
     KOL_API_URL: str = os.getenv("KOL_API_URL", "")
+    TRADER_API_URL: str = os.getenv("TRADER_API_URL", "")
     
     # 代理配置 (httpx/requests 会自动读取，这里仅做检查)
     HTTPS_PROXY: Optional[str] = os.getenv("HTTPS_PROXY")
@@ -46,7 +51,15 @@ class Config:
     @classmethod
     def validate_kol(cls):
         """检查 KOL 监控必要配置"""
-        if not cls.DINGTALK_WEBHOOK or not cls.KOL_API_URL:
-            logger.error("❌ 未找到 DINGTALK_WEBHOOK 或 KOL_API_URL")
+        if not cls.DINGTALK_KOL_WEBHOOK or not cls.KOL_API_URL:
+            logger.error("❌ 未找到 DINGTALK_KOL_WEBHOOK 或 KOL_API_URL")
+            return False
+        return True
+
+    @classmethod
+    def validate_trader(cls):
+        """检查交易员监控必要配置"""
+        if not cls.DINGTALK_TRADER_WEBHOOK or not cls.TRADER_API_URL:
+            logger.error("❌ 未找到 DINGTALK_TRADER_WEBHOOK 或 TRADER_API_URL")
             return False
         return True

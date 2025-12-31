@@ -7,11 +7,12 @@ from pathlib import Path
 
 class BaseRadar(ABC):
     """KOL监控基类"""
-    
-    def __init__(self, state_file_name, dingtalk_client):
+
+    def __init__(self, state_file_name, dingtalk_client, log_prefix):
         self.base_dir = Path(__file__).parent
         self.state_file = self.base_dir / state_file_name
         self.dingtalk = dingtalk_client
+        self.log_prefix = log_prefix  # 日志前缀，用于区分不同监控
     
     def load_state(self):
         """加载监控状态"""
@@ -55,31 +56,31 @@ class BaseRadar(ABC):
         """主监控循环"""
         api_url = self.get_api_url()
         if not api_url:
-            print(f"❌ 错误: 未找到 API URL 环境变量")
+            print(f"{self.log_prefix} ❌ 错误: 未找到 API URL 环境变量")
             return
-        
-        print(f"🚀 开始监控: {api_url}")
-        
+
+        print(f"{self.log_prefix} 🚀 开始监控")
+
         while True:
             try:
                 state = self.load_state()
-                
 
-                
+
+
                 # 子类实现具体的数据处理
                 has_new, new_state = self.process_new_items(state)
-                
+
                 if not has_new:
-                    print("💤 暂无新消息")
-                
+                    print(f"{self.log_prefix} 💤 暂无新消息")
+
                 # 保存状态
                 self.save_state(new_state)
-                
+
                 time.sleep(60)
-                
+
             except KeyboardInterrupt:
-                print("\n🛑 停止监控")
+                print(f"{self.log_prefix} 🛑 停止监控")
                 break
             except Exception as e:
-                print(f"❌ 监控异常: {e}")
+                print(f"{self.log_prefix} ❌ 监控异常: {e}")
                 time.sleep(60)
