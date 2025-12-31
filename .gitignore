@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+
+# Data
+data/
+
+# Bot state files
+bot_service/services/kol_monitor/*.json
+
+# Secrets
+.env
+
+# Logs
+*.log
