@@ -8,7 +8,7 @@ LOG_FILE = os.path.join(BASE_DIR, "bot.log")
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.DEBUG,
+    level=logging.INFO,
     handlers=[
         logging.FileHandler(LOG_FILE, encoding='utf-8'),
         logging.StreamHandler()

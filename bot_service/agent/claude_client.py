@@ -122,9 +122,9 @@ class ClaudeClient:
         session_uuid = self.user_sessions.get(user_id)
         
         if session_uuid:
-            logger.info(f"🤖 Claude 收到指令（继续会话 {session_uuid}）: {prompt}")
+            logger.debug(f"🤖 Claude 收到指令（继续会话 {session_uuid}）: {prompt}")
         else:
-            logger.info(f"🤖 Claude 收到指令（新会话）: {prompt}")
+            logger.debug(f"🤖 Claude 收到指令（新会话）: {prompt}")
         
         process = None
         try:
@@ -147,7 +147,7 @@ class ClaudeClient:
                 prompt
             ])
             
-            logger.info(f"执行命令: {' '.join(cmd)}")
+            logger.debug(f"执行命令: {' '.join(cmd)}")
             
             # 启动进程，增加缓冲区限制
             process = await asyncio.create_subprocess_exec(
@@ -200,7 +200,7 @@ class ClaudeClient:
                             if 'session_id' in data and not session_id:
                                 session_id = data['session_id']
                                 self.user_sessions[user_id] = session_id
-                                logger.info(f"✅ 会话 ID: {session_id}")
+                                logger.debug(f"✅ 会话 ID: {session_id}")
                             
                             event_type = data.get('type')
                             
@@ -249,7 +249,7 @@ class ClaudeClient:
                             # 3. 处理最终执行结果
                             elif event_type == 'result':
                                 final_result = data.get('result', '')
-                                logger.info(f"✅ Claude 执行结束")
+                                logger.debug(f"✅ Claude 执行结束")
                                 
                                 # 如果累积内容为空，但有最终结果，则使用最终结果
                                 if not accumulated_content and final_result:
@@ -302,7 +302,7 @@ class ClaudeClient:
             if process and process.returncode is None:
                 try:
                     process.kill()
-                    logger.info("🧹 已清理后台 Claude 进程")
+                    logger.debug("🧹 已清理后台 Claude 进程")
                 except Exception as e:
                     logger.warning(f"清理进程失败: {e}")
     
@@ -311,6 +311,6 @@ class ClaudeClient:
         if user_id in self.user_sessions:
             old_session = self.user_sessions[user_id]
             del self.user_sessions[user_id]
-            logger.info(f"✅ 已清除用户 {user_id} 的会话 {old_session}")
+            logger.debug(f"✅ 已清除用户 {user_id} 的会话 {old_session}")
         else:
-            logger.info(f"ℹ️ 用户 {user_id} 没有活跃会话")
+            logger.debug(f"ℹ️ 用户 {user_id} 没有活跃会话")
